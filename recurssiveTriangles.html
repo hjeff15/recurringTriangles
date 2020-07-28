@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.0.0/p5.js" integrity="sha256-w7+V9/jcjUhs0pVV3uaphYQbXkTJZkd/3CfsinPRzvM=" crossorigin="anonymous"></script>
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        let scl = 10;
+        let scl2 = 10;
+        let scl3 = 10;
+        let scl4 = 10;
+        let r;
+        let slider, sliderR, sliderG, sliderB, sliRText, sliGText, sliBText, recText;
+
+        function setup() {
+            createCanvas(600, 600);
+            sliRText = createP('Red');
+            sliRText.position(150, height+23);
+            sliGText = createP('Green');
+            sliGText.position(150, height+43);
+            sliBText = createP('Blue');
+            sliBText.position(150, height+63);
+            recText = createP("Recurssion Value");
+            recText.position(150, height+4);
+
+            
+            slider = createSlider(0,1000,20,10);
+            slider.position(0,height+20);
+            sliderR = createSlider(1,250,240,0);
+            sliderR.position(0, height+40);
+            sliderG = createSlider(1,250,50,0);
+            sliderG.position(0, height+60);
+            sliderB = createSlider(1,250,240,0);
+            sliderB.position(0, height+80);
+            r = 0.0;
+            // background(0);
+        }
+
+        function draw() {
+            background(0);
+            noFill();
+            
+            let n = noise(r)*5;
+            let radSin = sin(r)*200+n;
+            let radCos = cos(r)*250-n;
+            let hueMap = map(radSin,-245,240,10,200);
+            let strokeMap = map(radSin,-245,240,0.1,2);
+            r+= 0.01;
+            
+            let bounceX = width/2+radCos;
+            let bounceY = height/2+radSin;
+            
+            let val = slider.value();
+            let colorR = sliderR.value();
+            let colorG = sliderG.value();
+            let colorB = sliderB.value();
+
+            stroke(colorR, colorG, colorB, hueMap);
+            // stroke(255, 17, 140);
+            strokeWeight(strokeMap);
+            let levelBase = floor(map(bounceY, height,0,1,val));
+            let levelTop = floor(map(bounceY, 0,height,1,val));
+            let levelLeft = floor(map(bounceX, 0, width,1,val));
+            let levelRight = floor(map(bounceX, width, 0,1,val));
+            drawTri(scl,height - scl-bounceY, width/2, height/2+bounceY, width-scl, height - scl-bounceY,levelBase);
+            drawTriTop(scl2, scl2+bounceY, width/2, height/2-bounceY, width-scl2, scl2+bounceY, levelTop);
+            drawTriLeft(scl3, scl3, width/2+bounceX, height/2, scl3, height-scl3, levelLeft);
+            drawTriRight(width-scl4, scl4, width/2-bounceX, height/2, width-scl4, height-scl4, levelLeft);
+        }
+
+        function drawTri(x1,y1,x2,y2,x3,y3,level) {
+            // noFill();
+            triangle(x1,y1,x2,y2,x3,y3);
+
+            if (level > 1) {
+                x1 += scl;
+                y1 -= scl;
+                y2 -= scl;
+                x3 -= scl;
+                y3 -= scl;
+
+                level = level - 1;
+                drawTri(x1,y1,x2,y2,x3,y3,level);
+                // ellipse(diffx3,diffy3,10,10);
+            }
+        }
+
+        function drawTriTop(a,b,c,d,e,f,x){
+            triangle(a,b,c,d,e,f);
+            if(x>1){
+                a+=scl2
+                b+=scl2
+                // c+=10
+                d+=scl2
+                e-=scl2
+                f+=scl2
+                x=x-1;
+                drawTriTop(a,b,c,d,e,f,x)
+            }
+        }
+
+        function drawTriLeft(g,h,i,j,k,l,z){
+            triangle(g,h,i,j,k,l);
+            if(z>1){
+                g+=scl3
+                h+=scl3
+                i+=scl3
+                // j+=scl3
+                k+=scl3
+                l-=scl3
+                z=z-1;
+                drawTriLeft(g,h,i,j,k,l,z)
+            }
+        }
+ 
+        function drawTriRight(g,h,i,j,k,l,z){
+            triangle(g,h,i,j,k,l);
+            if(z>1){
+                g-=scl3
+                h+=scl3
+                i-=scl3
+                // j+=scl3
+                k-=scl3
+                l-=scl3
+                z=z-1;
+                drawTriRight(g,h,i,j,k,l,z)
+            }
+        }
+        
+
+    </script>
+</body>
+</html>
